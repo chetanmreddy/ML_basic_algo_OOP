@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 # @Author: chetan
 # @Date:   2021-01-06 00:52:51
-# @Last Modified by:   chetan
-# @Last Modified time: 2021-01-06 01:33:35
-# Steps for K-maens:
-	#Choose value for K
-	#Randomly select K featuresets to start as your centroids
-	#Calculate distance of all other featuresets to centroids
-	#Classify other featuresets as same as closest centroid
-	#Take mean of each class (mean of all featuresets by class), making that mean the new centroid
-	#epeat steps 3-5 until optimized (centroids no longer moving)
+# @Last Modified by:   Chetan Reddy
+# @Last Modified time: 2021-01-06 10:29:49
+
+'''
+Steps for K-maens:
+	Choose value for K
+	Randomly select K featuresets to start as your centroids
+	Calculate distance of all other featuresets to centroids
+	Classify other featuresets as same as closest centroid
+	Take mean of each class (mean of all featuresets by class), making that mean the new centroid
+	Repeat steps 3-5 until optimized (centroids no longer moving)
+'''
 
 import matplotlib.pyplot as plt
 from matplotlib import style
@@ -47,6 +50,8 @@ class K_Means():
 			for i in range(self.k):
 				self.classifications[i] = []
 
+			#Calculate distances and classify all data into centroids
+
 			for featureset in data:
 				distances = [np.linalg.norm(featureset - self.centroids[centroid]) for centroid in self.centroids]
 				classification = distances.index(min(distances))
@@ -54,10 +59,14 @@ class K_Means():
 
 			prev_centroids = dict(self.centroids)
 
+			# Update centroids
+
 			for classification in self.classifications:
 				self.centroids[classification] = np.average(self.classifications[classification], axis=0)
 
 			optimized = True
+
+			# Check if the current cetroids are optimized
 
 			for c in self.centroids:
 				original_centroid = prev_centroids[c]
@@ -69,6 +78,7 @@ class K_Means():
 			if optimized:
 				break
 
+	#function to predict on new data
 	def predict(self, data):
 		distances = [np.linalg.norm(data-self.centroids[centroid]) for centroid in self.centroids]
 		classification = distances.index(min(distances))
